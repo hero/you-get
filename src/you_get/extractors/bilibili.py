@@ -100,7 +100,8 @@ class Bilibili(VideoExtractor):
         appkey, sec = ''.join([chr(ord(i) + 2) for i in entropy[::-1]]).split(':')
         params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (appkey, cid, qn, qn)
         chksum = hashlib.md5(bytes(params + sec, 'utf8')).hexdigest()
-        return 'https://interface.bilibili.com/v2/playurl?%s&sign=%s' % (params, chksum)
+        return 'https://api.bilibili.com/x/player/wbi/v2?%s&sign=%s' % (params, chksum)
+
 
     @staticmethod
     def bilibili_live_api(cid):
@@ -334,7 +335,7 @@ class Bilibili(VideoExtractor):
                                                             'src': [[baseurl]], 'size': size}
 
             # get danmaku
-            self.danmaku = get_content('http://comment.bilibili.com/%s.xml' % cid)
+            self.danmaku = get_content('https://comment.bilibili.com/%s.xml' % cid, headers=self.bilibili_headers(referer=self.url))
 
         # bangumi
         elif sort == 'bangumi':
@@ -413,7 +414,7 @@ class Bilibili(VideoExtractor):
                                                         'src': [[baseurl], [audio_baseurl]], 'size': size}
 
             # get danmaku
-            self.danmaku = get_content('http://comment.bilibili.com/%s.xml' % cid)
+            self.danmaku = get_content('https://comment.bilibili.com/%s.xml' % cid, headers=self.bilibili_headers(referer=self.url))
 
         # vc video
         elif sort == 'vc':
@@ -595,7 +596,7 @@ class Bilibili(VideoExtractor):
                                                         'src': [[baseurl]], 'size': size}
 
         # get danmaku
-        self.danmaku = get_content('http://comment.bilibili.com/%s.xml' % cid)
+        self.danmaku = get_content('https://comment.bilibili.com/%s.xml' % cid, headers=self.bilibili_headers(referer=self.url))
 
     def extract(self, **kwargs):
         # set UA and referer for downloading
